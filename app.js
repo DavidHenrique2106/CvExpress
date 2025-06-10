@@ -21,4 +21,9 @@ pessoasRouter.use('/:id/experiencia', experienciaRouter);
 
 app.use('/pessoas', pessoasRouter);
 
+app.get('/', (req, res) => {
+  res.send('API rodando! 🚀');
+});
+
+
 module.exports = app;
