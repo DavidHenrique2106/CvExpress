@@ -10,6 +10,24 @@ const headers = {
   Prefer: 'return=representation'
 };
 
+// GET /pessoas
+router.get('/', async (req, res) => {
+  try {
+    const url = `${baseUrl}/rest/v1/Pessoa?select=*`;
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      return res.status(response.status).json({ erro: 'Erro ao buscar pessoas' });
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro interno', detalhe: err.message });
+  }
+});
+
+
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {

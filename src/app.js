@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-require('dotenv').config(); 
+require('dotenv').config();
 
 const app = express();
 
@@ -12,9 +12,18 @@ const skillRouter = require('./routes/skill');
 const formacaoRouter = require('./routes/formacao');
 const experienciaRouter = require('./routes/experiencia');
 
-app.use('/pessoas', pessoaRouter);
-app.use('/pessoas/:id/Skill', skillRouter);
-app.use('/pessoas/:id/formacao', formacaoRouter);
-app.use('/pessoas/:id/experiencia', experienciaRouter);
+// Criar um router para pessoas para montar as rotas aninhadas
+const pessoasRouter = express.Router();
+
+// Rotas básicas para /pessoas
+pessoasRouter.use('/', pessoaRouter);
+
+// Rotas aninhadas, já com o :id sendo passado
+pessoasRouter.use('/:id/skill', skillRouter);
+pessoasRouter.use('/:id/formacao', formacaoRouter);
+pessoasRouter.use('/:id/experiencia', experienciaRouter);
+
+// Montar no app
+app.use('/pessoas', pessoasRouter);
 
 module.exports = app;
