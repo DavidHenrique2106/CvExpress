@@ -7,23 +7,18 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
-const pessoaRouter = require('./routes/pessoa');
-const skillRouter = require('./routes/skill');
-const formacaoRouter = require('./routes/formacao');
-const experienciaRouter = require('./routes/experiencia');
+const pessoaRouter = require('./src/routes/pessoa');
+const skillRouter = require('./src/routes/skill');
+const formacaoRouter = require('./src/routes/formacao');
+const experienciaRouter = require('./src/routes/experiencia');
 
-// Criar um router para pessoas para montar as rotas aninhadas
 const pessoasRouter = express.Router();
 
-// Rotas básicas para /pessoas
 pessoasRouter.use('/', pessoaRouter);
-
-// Rotas aninhadas, já com o :id sendo passado
 pessoasRouter.use('/:id/skill', skillRouter);
 pessoasRouter.use('/:id/formacao', formacaoRouter);
 pessoasRouter.use('/:id/experiencia', experienciaRouter);
 
-// Montar no app
 app.use('/pessoas', pessoasRouter);
 
 module.exports = app;
