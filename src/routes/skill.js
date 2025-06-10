@@ -54,6 +54,39 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.patch('/:skillId', async (req, res) => {
+  const pessoaId = req.params.id;
+  const skillId = req.params.skillId;
+  const updates = req.body;
+
+  if (!updates || Object.keys(updates).length === 0) {
+    return res.status(400).json({ message: 'Nenhum dado para atualizar foi enviado' });
+  }
+
+  try {
+    const url = `${baseUrl}/rest/v1/Skill?id=eq.${skillId}&pessoaid=eq.${pessoaId}`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return res.status(response.status).json({ message: 'Erro ao atualizar skill', detalhe: errorText });
+    }
+
+    const data = await response.json();
+    if (data.length === 0) {
+      return res.status(404).json({ message: 'Skill não encontrada' });
+    }
+
+    res.json(data[0]);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar skill', error: error.message });
+  }
+});
+
 router.delete('/:skillId', async (req, res) => {
   const pessoaId = req.params.id;
   const skillId = req.params.skillId;

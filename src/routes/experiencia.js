@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const pessoaId = req.params.id;
-  const { empresa, cargo, inicio, fim, } = req.body;
+  const { empresa, cargo, inicio, fim } = req.body;
 
   if (!empresa || !cargo) {
     return res.status(400).json({ message: 'Campos "empresa" e "cargo" são obrigatórios' });
@@ -59,6 +59,39 @@ router.post('/', async (req, res) => {
     res.status(201).json(data[0]);
   } catch (error) {
     res.status(500).json({ message: 'Erro ao criar experiência', error: error.message });
+  }
+});
+
+router.patch('/:experienciaId', async (req, res) => {
+  const pessoaId = req.params.id;
+  const experienciaId = req.params.experienciaId;
+  const updates = req.body;
+
+  if (!updates || Object.keys(updates).length === 0) {
+    return res.status(400).json({ message: 'Nenhum dado para atualizar foi enviado' });
+  }
+
+  try {
+    const url = `${baseUrl}/rest/v1/Experiencia?id=eq.${experienciaId}&pessoaid=eq.${pessoaId}`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return res.status(response.status).json({ message: 'Erro ao atualizar experiência', detalhe: errorText });
+    }
+
+    const data = await response.json();
+    if (data.length === 0) {
+      return res.status(404).json({ message: 'Experiência não encontrada' });
+    }
+
+    res.json(data[0]);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar experiência', error: error.message });
   }
 });
 
